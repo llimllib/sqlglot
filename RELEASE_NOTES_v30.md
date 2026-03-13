@@ -90,7 +90,19 @@ Previously, the `_Dialect` metaclass dynamically modified parser token sets (`ID
 - `Dialect.SUPPORTS_SEMI_ANTI_JOIN` has been removed.
 - `SHOW_TRIE` / `SET_TRIE` are no longer auto-computed from `SHOW_PARSERS` / `SET_PARSERS`.
 
-### 6. Compiled classes cannot be subclassed (when using `[c]`)
+### 6. Use `Expr` instead of `Expression` for generic `isinstance` checks
+
+Base classes like `Func`, `Condition`, `Binary`, and other traits now inherit from `Expr` directly, not from `Expression`. This means `isinstance(node, exp.Expression)` will **not** match these trait classes. If your code uses `isinstance` to check for "any AST node", switch to `exp.Expr`:
+
+```python
+# Before
+isinstance(node, exp.Expression)
+
+# After
+isinstance(node, exp.Expr)
+```
+
+### 7. Compiled classes cannot be subclassed (when using `[c]`)
 
 When `sqlglot[c]` is installed, many core classes are compiled via mypyc. **Compiled classes cannot be subclassed at runtime** — class definition succeeds, but instantiation raises `TypeError: interpreted classes cannot inherit from compiled`.
 
